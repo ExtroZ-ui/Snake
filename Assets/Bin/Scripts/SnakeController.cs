@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ public class SnakeController : MonoBehaviour
 
     public Text textScore;
     private int score;
-    private MenuController menuController;
+    public MenuController menuController;
 
     
 
@@ -88,12 +89,13 @@ public class SnakeController : MonoBehaviour
         // добавление его в список
         GameObject body = Instantiate(BodyPrefab, LastBody.transform.position, LastBody.transform.rotation);
         BodyParts.Add(body);
+        Debug.Log(BodyParts.Count);
     }
 
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.GetComponent<Apple>())
+        if (other.GetComponent<Apple>()) // Проверка на подбор яблок
         {
             GrowSnake();
             Destroy(other.gameObject);
@@ -101,6 +103,11 @@ public class SnakeController : MonoBehaviour
 
             score++;
             textScore.text = score.ToString();
+        }
+
+        if (other.GetComponent<BodySnakeController>() && BodyParts.Count >= 4) 
+        {
+            RestartScene();
         }
 
     }
@@ -112,13 +119,15 @@ public class SnakeController : MonoBehaviour
         {
 
             SnakeHead.isKinematic = false;
-        
-            PlayerPrefs.SetInt("Money", MenuController.money += score);
-            PlayerPrefs.Save();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-
+            RestartScene();
         }
+    }
+
+    private void RestartScene(){
+        PlayerPrefs.SetInt("Money", MenuController.money += score);
+        score = 0;
+        PlayerPrefs.Save();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
 }

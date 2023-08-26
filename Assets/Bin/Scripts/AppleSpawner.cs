@@ -7,7 +7,7 @@ public class AppleSpawner : MonoBehaviour
 
     public GameObject applePrefab;
     public Collider spawnCollider;
-    public float spawnerInterval = 2f;
+
 
     void Start()
     {
